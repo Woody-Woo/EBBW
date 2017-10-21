@@ -28,6 +28,7 @@
             <TextBlock Name="StagePositionTextBlock" />
             <TextBlock Text="State:" />
             <TextBlock Name="StateTextBlock" />
+            <CheckBox Content="Speed training" Name="SpeedTraining"></CheckBox>
         </StackPanel>
         
         <StackPanel Grid.Column="2" Grid.Row="0" >

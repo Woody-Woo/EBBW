@@ -595,6 +595,16 @@ namespace ForTest
                     var knowSlide = GetKnowSlide(CurSlideHash);
                     if (knowSlide == null)
                     {
+                        var speedTraining = false;
+                        Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
+                        {
+                            speedTraining = SpeedTraining.IsChecked ?? false;
+                        }));
+
+                        if (speedTraining)
+                        {
+                            ClickNext();
+                        }
                         //recMouseClick = new List<MouseClickEventArgs>();
                     }
                     else
