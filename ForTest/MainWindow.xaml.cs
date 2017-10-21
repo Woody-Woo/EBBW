@@ -115,6 +115,16 @@ namespace ForTest
             Contrast = false
         };
 
+        private RectPoint SuccesAnalizPoint4 = new RectPoint()
+        {
+            x1 = 540,
+            y1 = 95,
+            x2 = 542,
+            y2 = 97,
+            Hash = "F0975A85BED013CFB12FE6764AAAC871",
+            Contrast = false
+        };
+
         private RectPoint BadAnalizPoint = new RectPoint()
         {
             x1 = 463,
@@ -293,7 +303,7 @@ namespace ForTest
 
                 CurrentStage = Stage.Prize;
             }
-            else if (SuccesAnalizPoint.IsSuccess() || SuccesAnalizPoint2.IsSuccess() || SuccesAnalizPoint3.IsSuccess())
+            else if (SuccesAnalizPoint.IsSuccess() || SuccesAnalizPoint2.IsSuccess() || SuccesAnalizPoint3.IsSuccess() || SuccesAnalizPoint4.IsSuccess())
             {
 
                 CurrentStage = Stage.SuccessAnaliz;
@@ -608,7 +618,8 @@ namespace ForTest
                     ClickNext();
                     break;
                 case Stage.ConcesusAnaliz:
-                    SaveSlide(CurSlideHash, true);
+                    //SaveSlide(CurSlideHash, true);
+                    ToDiscaveryLog("Consensus.");
                     recMouseClick = new List<MouseClickEventArgs>();
                     ClickNext();
                     break;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace ClickerSDK
 {
@@ -26,6 +27,7 @@ namespace ClickerSDK
         public void MouseClick(MouseButton button, int X, int Y)
         {
             MouseHelper.MoveMouse(X,Y);
+            Thread.Sleep(10);
             MouseHelper.MouseClick(button);
         }
 
