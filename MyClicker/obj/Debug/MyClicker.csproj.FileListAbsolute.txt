@@ -1,0 +1,8 @@
+I:\dev\MyClicker\MyClicker\bin\Debug\MyClicker.exe.config
+I:\dev\MyClicker\MyClicker\bin\Debug\MyClicker.exe
+I:\dev\MyClicker\MyClicker\bin\Debug\MyClicker.pdb
+I:\dev\MyClicker\MyClicker\bin\Debug\ClickerSDK.dll
+I:\dev\MyClicker\MyClicker\bin\Debug\ClickerSDK.pdb
+I:\dev\MyClicker\MyClicker\obj\Debug\MyClicker.csprojResolveAssemblyReference.cache
+I:\dev\MyClicker\MyClicker\obj\Debug\MyClicker.exe
+I:\dev\MyClicker\MyClicker\obj\Debug\MyClicker.pdb

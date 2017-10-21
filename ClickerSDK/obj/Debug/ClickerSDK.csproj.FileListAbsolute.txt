@@ -1,0 +1,5 @@
+I:\dev\MyClicker\ClickerSDK\bin\Debug\ClickerSDK.dll
+I:\dev\MyClicker\ClickerSDK\bin\Debug\ClickerSDK.pdb
+I:\dev\MyClicker\ClickerSDK\obj\Debug\ClickerSDK.dll
+I:\dev\MyClicker\ClickerSDK\obj\Debug\ClickerSDK.pdb
+i:\dev\MyClicker\ClickerSDK\obj\Debug\ClickerSDK.csprojResolveAssemblyReference.cache
