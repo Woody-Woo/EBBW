@@ -126,7 +126,7 @@ namespace ForTest
             Contrast = false
         };
 
-        private RectPoint SuccesAnalizPoint5= new RectPoint()
+        private RectPoint SuccesAnalizPoint5 = new RectPoint()
         {
             x1 = 422,
             y1 = 94,
@@ -579,6 +579,7 @@ namespace ForTest
         {
             Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
+                Stat.Text = string.Concat(statSuccess, "/", statFail);
                 StagePositionTextBlock.Foreground = new SolidColorBrush(Colors.Black);
                 MainGrid.Background = new SolidColorBrush(Colors.Transparent);
             }));
@@ -592,7 +593,7 @@ namespace ForTest
                     break;
 
                 case Stage.Analiz:
-                    Thread.Sleep(1000);
+                    Thread.Sleep(1500);
                     string pathOfCurAnalizImage;
 
                     CurSlideHash = SlideIdenty.ComputeHash(out pathOfCurAnalizImage);
@@ -654,6 +655,7 @@ namespace ForTest
                     pHash = CurSlideHash;
                     break;
                 case Stage.SuccessAnaliz:
+                    statSuccess++;
                     SaveSlide(CurSlideHash, true);
                     recMouseClick = new List<MouseClickEventArgs>();
                     ClickNext();
@@ -665,6 +667,7 @@ namespace ForTest
                     ClickNext();
                     break;
                 case Stage.BadAnaliz:
+                    statFail++;
                     SaveBadScreen(CurSlideHash);
                     SaveSlide(CurSlideHash, false);
                     recMouseClick = new List<MouseClickEventArgs>();
@@ -721,11 +724,13 @@ namespace ForTest
             }
         }
 
+        private string DbName => string.Concat(Environment.MachineName, Environment.MachineName, ".db");
+
         private void SaveSlide(string hash, bool isSuccess, bool force = false)
         {
             if (!string.IsNullOrEmpty(hash))
             {
-                using (var db = new LiteDatabase(Path.Combine(_screnShotFolder, @"Discavery.db")))
+                using (var db = new LiteDatabase(Path.Combine(_screnShotFolder, DbName)))
                 {
                     var knowSlides = db.GetCollection<KnowSlide>("KnowSlide");
                     knowSlides.EnsureIndex(x => x.Hash);
@@ -824,7 +829,7 @@ namespace ForTest
                     MainGrid.Background = new SolidColorBrush(Colors.YellowGreen);
                 }));
 
-                Thread.Sleep(3000);
+                Thread.Sleep(3500);
 
 
                 ToDiscaveryLog("Checked slide");
@@ -832,7 +837,7 @@ namespace ForTest
                 {
                     CheckPause();
                     mouse.MouseClick(a.MouseButton, a.X, a.Y);
-                    Thread.Sleep(3000);
+                    Thread.Sleep(3500);
                 }
 
                 Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
@@ -845,6 +850,9 @@ namespace ForTest
                 IsPlayed = false;
             }
         }
+
+        private int statSuccess = 0;
+        private int statFail = 0;
 
         public class KnowSlide
         {
@@ -885,7 +893,7 @@ namespace ForTest
 
         private KnowSlide GetKnowSlide(string hash)
         {
-            using (var db = new LiteDatabase(Path.Combine(_screnShotFolder, @"Discavery.db")))
+            using (var db = new LiteDatabase(Path.Combine(_screnShotFolder, DbName)))
             {
                 var knowSlides = db.GetCollection<KnowSlide>("KnowSlide");
                 knowSlides.EnsureIndex(x => x.Hash);
@@ -903,6 +911,10 @@ namespace ForTest
         {
             InitializeComponent();
 
+            //SynkDb();
+
+
+
             mouse = Mouse.Instanse;
 
 
@@ -910,7 +922,7 @@ namespace ForTest
 
             if (eveProvess.Any())
             {
-                var z =  WindHandle.GetWindowRect(eveProvess[0]);
+                var z = WindHandle.GetWindowRect(eveProvess[0]);
                 ToDiscaveryLog($"{z.Top} {z.Left} {z.Right} {z.Bottom}");
             }
 
@@ -970,7 +982,7 @@ namespace ForTest
                             timeoutStart = DateTime.UtcNow;
                         }
 
-                        if (IsBot && !IsPlayed && (DateTime.UtcNow - timeoutStart).TotalSeconds > 30)
+                        if (IsBot && !IsPlayed && (DateTime.UtcNow - timeoutStart).TotalSeconds > 90)
                         {
                             ClickNext();
                         }
@@ -980,7 +992,55 @@ namespace ForTest
             });
         }
 
+        private void SynkDb()
+        {
+            using (var db = new LiteDatabase(Path.Combine(_screnShotFolder, DbName)))
+            {
+                var knowSlides = db.GetCollection<KnowSlide>("KnowSlide");
+                knowSlides.EnsureIndex(x => x.Hash);
+
+                foreach (
+                    var dbDName in
+                    new DirectoryInfo(_screnShotFolder).GetFiles()
+                        .Where(info => info.Name.Contains(".db"))
+                        .Select(info => info.Name))
+                {
+                    if (!DbName.Equals(dbDName))
+                    {
+                        using (var importeDb = new LiteDatabase(Path.Combine(_screnShotFolder, dbDName)))
+                        {
+                            var importedKnowSlides = importeDb.GetCollection<KnowSlide>("KnowSlide");
+                            importedKnowSlides.EnsureIndex(x => x.Hash);
+
+                            foreach (var importedSlide in importedKnowSlides.FindAll())
+                            {
+                                var existSlide = knowSlides.FindOne(slide => slide.Hash == importedSlide.Hash);
+
+                                if (existSlide == null)
+                                {
+                                    knowSlides.Insert(importedSlide);
+                                }
+                                else
+                                {
+                                    if (importedSlide.IsSuccess && !existSlide.IsSuccess)
+                                    {
+                                        existSlide.IsSuccess = importedSlide.IsSuccess;
+                                        existSlide.ClickEventArgses = importedSlide.ClickEventArgses;
+                                        knowSlides.Update(existSlide);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         private DateTime timeoutStart;
 
+        private void SynkDbOnClick(object sender, RoutedEventArgs e)
+        {
+            SynkDb();
+        }
     }
 }
