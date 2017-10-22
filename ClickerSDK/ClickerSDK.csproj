@@ -56,6 +56,7 @@
     <Compile Include="Mouse\MouseHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Screen\ScreenHelper.cs" />
+    <Compile Include="Wind\WindHandle.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

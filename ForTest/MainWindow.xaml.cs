@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using ClickerSDK;
+using ClickerSDK.Wind;
 using LiteDB;
 using Color = System.Drawing.Color;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
@@ -615,11 +616,7 @@ namespace ForTest
                     var knowSlide = GetKnowSlide(CurSlideHash);
                     if (knowSlide == null)
                     {
-                        var speedTraining = false;
-                        Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
-                        {
-                            speedTraining = SpeedTraining.IsChecked ?? false;
-                        }));
+                        var speedTraining = IsTraining;
 
                         if (speedTraining)
                         {
@@ -643,7 +640,14 @@ namespace ForTest
                         else
                         {
                             //recMouseClick = new List<MouseClickEventArgs>();
-                            StopBotAndShowSavedScreen(knowSlide);
+                            if (IsBot)
+                            {
+                                ClickNext();
+                            }
+                            else
+                            {
+                                StopBotAndShowSavedScreen(knowSlide);
+                            }
                         }
                     }
 
@@ -673,6 +677,28 @@ namespace ForTest
                 case Stage.Uncknow:
 
                     break;
+            }
+        }
+
+        private bool IsBot
+        {
+            get
+            {
+                var speedTraining = false;
+                Dispatcher.Invoke(DispatcherPriority.Background,
+                    new Action(() => { speedTraining = Bot.IsChecked ?? false; }));
+                return speedTraining;
+            }
+        }
+
+        private bool IsTraining
+        {
+            get
+            {
+                var speedTraining = false;
+                Dispatcher.Invoke(DispatcherPriority.Background,
+                    new Action(() => { speedTraining = SpeedTraining.IsChecked ?? false; }));
+                return speedTraining;
             }
         }
 
@@ -785,29 +811,39 @@ namespace ForTest
             recMouseClick = new List<MouseClickEventArgs>();
         }
 
+        private bool IsPlayed { get; set; }
+
         private void PlaySlide(KnowSlide knowSlide)
         {
-
-            Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            try
             {
-                MainGrid.Background = new SolidColorBrush(Colors.YellowGreen);
-            }));
+                IsPlayed = true;
 
-            Thread.Sleep(3000);
-                
+                Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                {
+                    MainGrid.Background = new SolidColorBrush(Colors.YellowGreen);
+                }));
 
-            ToDiscaveryLog("Checked slide");
-            foreach (var a in ToEventArgs(knowSlide.ClickEventArgses))
-            {
-                CheckPause();
-                mouse.MouseClick(a.MouseButton, a.X, a.Y);
-                Thread.Sleep(2000);
+                Thread.Sleep(3000);
+
+
+                ToDiscaveryLog("Checked slide");
+                foreach (var a in ToEventArgs(knowSlide.ClickEventArgses))
+                {
+                    CheckPause();
+                    mouse.MouseClick(a.MouseButton, a.X, a.Y);
+                    Thread.Sleep(3000);
+                }
+
+                Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                {
+                    MainGrid.Background = new SolidColorBrush(Colors.Transparent);
+                }));
             }
-
-            Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            finally
             {
-                MainGrid.Background = new SolidColorBrush(Colors.Transparent);
-            }));
+                IsPlayed = false;
+            }
         }
 
         public class KnowSlide
@@ -869,15 +905,19 @@ namespace ForTest
 
             mouse = Mouse.Instanse;
 
-            //using (var db = new LiteDatabase(Path.Combine(_screnShotFolder, @"Discavery.db")))
-            //{
-            //    var knowSlides = db.GetCollection<KnowSlide>("KnowSlide");
 
-            //    foreach (var x in knowSlides.FindAll())
-            //    {
-            //        Log.Text += Environment.NewLine + x.ClickEventArgses;
-            //    }
-            //}
+            var eveProvess = Process.GetProcessesByName("exefile");
+
+            if (eveProvess.Any())
+            {
+                var z =  WindHandle.GetWindowRect(eveProvess[0]);
+                ToDiscaveryLog($"{z.Top} {z.Left} {z.Right} {z.Bottom}");
+            }
+
+            if (eveProvess.Any())
+            {
+                ToDiscaveryLog("Finded exe file");
+            }
 
             mouse.OnClick += (sender, args) =>
             {
@@ -927,12 +967,20 @@ namespace ForTest
                         if (Stage.BadConnection == CurrentStage || CurrentStage != PrevStage)
                         {
                             PlayAction();
+                            timeoutStart = DateTime.UtcNow;
+                        }
+
+                        if (IsBot && !IsPlayed && (DateTime.UtcNow - timeoutStart).TotalSeconds > 30)
+                        {
+                            ClickNext();
                         }
                     }
+
                 }
             });
         }
 
+        private DateTime timeoutStart;
 
     }
 }

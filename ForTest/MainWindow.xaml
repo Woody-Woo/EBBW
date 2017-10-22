@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ForTest"
         mc:Ignorable="d" Closed="MainWindow_OnClosed"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="650" Width="525">
     <Grid  Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -29,9 +29,11 @@
             <TextBlock Text="State:" />
             <TextBlock Name="StateTextBlock" />
             <CheckBox Content="Speed training" Name="SpeedTraining"></CheckBox>
+            <CheckBox Content="Bot" Name="Bot"></CheckBox>
         </StackPanel>
         
         <StackPanel Grid.Column="2" Grid.Row="0" >
+            
             <Button Content="Get hash" Click="GetHash"/>
             <TextBox Name="Hash"/>
             <WrapPanel>
