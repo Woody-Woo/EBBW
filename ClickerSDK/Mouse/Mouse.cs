@@ -27,7 +27,7 @@ namespace ClickerSDK
         public void MouseClick(MouseButton button, int X, int Y)
         {
             MouseHelper.MoveMouse(X,Y);
-            Thread.Sleep(10);
+            Thread.Sleep(100);
             MouseHelper.MouseClick(button);
         }
 

@@ -1018,6 +1018,7 @@ namespace ForTest
 
                                 if (existSlide == null)
                                 {
+                                    importedSlide.Id = 0;
                                     knowSlides.Insert(importedSlide);
                                 }
                                 else
