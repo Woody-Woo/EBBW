@@ -125,6 +125,16 @@ namespace ForTest
             Contrast = false
         };
 
+        private RectPoint SuccesAnalizPoint5= new RectPoint()
+        {
+            x1 = 422,
+            y1 = 94,
+            x2 = 424,
+            y2 = 96,
+            Hash = "32C009AEA94A9CFE81D8E91BECC62894",
+            Contrast = false
+        };
+
         private RectPoint BadAnalizPoint = new RectPoint()
         {
             x1 = 463,
@@ -143,6 +153,16 @@ namespace ForTest
             x2 = 480,
             y2 = 92,
             Hash = "D93660DA5C9383729DECF4024E0CCB46",
+            Contrast = false
+        };
+
+        private RectPoint BadAnalizPoint3 = new RectPoint()
+        {
+            x1 = 479,
+            y1 = 101,
+            x2 = 481,
+            y2 = 103,
+            Hash = "D458C5A014D30E7C08B9A25CA48DA04E",
             Contrast = false
         };
 
@@ -288,7 +308,7 @@ namespace ForTest
                 CurrentStage = Stage.BadConnection;
             }
             else
-            if (BadAnalizPoint.IsSuccess() || BadAnalizPoint2.IsSuccess())
+            if (BadAnalizPoint.IsSuccess() || BadAnalizPoint2.IsSuccess() || BadAnalizPoint3.IsSuccess())
             {
 
                 CurrentStage = Stage.BadAnaliz;
@@ -303,7 +323,7 @@ namespace ForTest
 
                 CurrentStage = Stage.Prize;
             }
-            else if (SuccesAnalizPoint.IsSuccess() || SuccesAnalizPoint2.IsSuccess() || SuccesAnalizPoint3.IsSuccess() || SuccesAnalizPoint4.IsSuccess())
+            else if (SuccesAnalizPoint.IsSuccess() || SuccesAnalizPoint2.IsSuccess() || SuccesAnalizPoint3.IsSuccess() || SuccesAnalizPoint4.IsSuccess() || SuccesAnalizPoint5.IsSuccess())
             {
 
                 CurrentStage = Stage.SuccessAnaliz;
@@ -611,7 +631,14 @@ namespace ForTest
                     {
                         if (knowSlide.IsSuccess)
                         {
-                            PlaySlide(knowSlide);
+                            if (string.IsNullOrEmpty(knowSlide.ClickEventArgses))
+                            {
+                                SaveSlide(CurSlideHash, false, true);
+                            }
+                            else
+                            {
+                                PlaySlide(knowSlide);
+                            }
                         }
                         else
                         {
@@ -668,7 +695,7 @@ namespace ForTest
             }
         }
 
-        private void SaveSlide(string hash, bool isSuccess)
+        private void SaveSlide(string hash, bool isSuccess, bool force = false)
         {
             if (!string.IsNullOrEmpty(hash))
             {
@@ -681,11 +708,11 @@ namespace ForTest
 
                     if (oldSlide != null)
                     {
-                        if (!oldSlide.IsSuccess && isSuccess)
+                        if ((!oldSlide.IsSuccess && isSuccess) || force)
                         {
                             ToDiscaveryLog($"Update slide. Success: {isSuccess}. ClicCount {recMouseClick.Count}");
                             oldSlide.ClickEventArgses = ToStr(recMouseClick.ToArray());
-                            oldSlide.IsSuccess = true;
+                            oldSlide.IsSuccess = isSuccess;
                             knowSlides.Update(oldSlide);
                         }
                         else
