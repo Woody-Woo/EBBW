@@ -1019,7 +1019,7 @@ namespace ForTest
                         using (var importeDb = new LiteDatabase(Path.Combine(_screnShotFolder, dbDName)))
                         {
                             var importedKnowSlides = importeDb.GetCollection<KnowSlide>("KnowSlide");
-                            importedKnowSlides.EnsureIndex(x => x.Hash);
+                            //importedKnowSlides.EnsureIndex(x => x.Hash);
 
                             foreach (var importedSlide in importedKnowSlides.FindAll())
                             {
