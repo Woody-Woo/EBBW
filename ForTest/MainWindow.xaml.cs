@@ -831,7 +831,6 @@ namespace ForTest
 
                 Thread.Sleep(500);
 
-
                 ToDiscaveryLog("Checked slide");
                 foreach (var a in ToEventArgs(knowSlide.ClickEventArgses))
                 {
