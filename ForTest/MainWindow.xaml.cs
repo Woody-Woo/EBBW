@@ -8,6 +8,7 @@ using ClickerSDK.Keyboard;
 using ClickerSDK.Screen;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -658,23 +659,23 @@ namespace ForTest
                     statSuccess++;
                     SaveSlide(CurSlideHash, true);
                     recMouseClick = new List<MouseClickEventArgs>();
-                    ClickNext();
+                    ClickNext(true);
                     break;
                 case Stage.ConcesusAnaliz:
                     //SaveSlide(CurSlideHash, true);
                     ToDiscaveryLog("Consensus.");
                     recMouseClick = new List<MouseClickEventArgs>();
-                    ClickNext();
+                    ClickNext(true);
                     break;
                 case Stage.BadAnaliz:
                     statFail++;
                     SaveBadScreen(CurSlideHash);
                     SaveSlide(CurSlideHash, false);
                     recMouseClick = new List<MouseClickEventArgs>();
-                    ClickNext();
+                    ClickNext(true);
                     break;
                 case Stage.Prize:
-                    ClickNext();
+                    ClickNext(true);
                     recMouseClick = new List<MouseClickEventArgs>();
                     break;
                 case Stage.Uncknow:
@@ -816,6 +817,25 @@ namespace ForTest
             recMouseClick = new List<MouseClickEventArgs>();
         }
 
+
+
+
+        public static int indexOfActiveWindow = 0;
+
+        private static Process[] _eveProcess = Process.GetProcessesByName("exefile");
+
+        private static void ChangeEve()
+        {
+            prevIndexWindow = indexOfActiveWindow;
+
+            if (++indexOfActiveWindow >= _eveProcess.Length)
+            {
+                indexOfActiveWindow = 0;
+            }
+
+            WindHandle.ActiveWindow(_eveProcess[indexOfActiveWindow]);
+        }
+
         private bool IsPlayed { get; set; }
 
         private void PlaySlide(KnowSlide knowSlide)
@@ -913,9 +933,17 @@ namespace ForTest
         }
 
         //508 603
-        private void ClickNext()
+        private void ClickNext(bool changeWindow = false)
         {
             mouse.MouseClick(MouseButton.Left, 508, 603);
+
+            if (changeWindow)
+            {
+                Thread.Sleep(300);
+                ChangeEve();
+            }
+
+            
         }
 
         public MainWindow()
@@ -937,10 +965,10 @@ namespace ForTest
                 ToDiscaveryLog($"{z.Top} {z.Left} {z.Right} {z.Bottom}");
             }
 
-            if (eveProvess.Any())
-            {
-                ToDiscaveryLog("Finded exe file");
-            }
+            //if (eveProvess.Any())
+            //{
+            //    ToDiscaveryLog("Finded exe file");
+            //}
 
             mouse.OnClick += (sender, args) =>
             {
@@ -987,7 +1015,7 @@ namespace ForTest
                     if (CheckPosition())
                     {
                         CheckState();
-                        if (Stage.BadConnection == CurrentStage || CurrentStage != PrevStage)
+                        if (Stage.BadConnection == CurrentStage || CurrentStage != PrevStage || prevIndexWindow != indexOfActiveWindow)
                         {
                             PlayAction();
                             timeoutStart = DateTime.UtcNow;
@@ -1002,6 +1030,8 @@ namespace ForTest
                 }
             });
         }
+
+        private static int prevIndexWindow = 0;
 
         private void SynkDb()
         {
