@@ -834,17 +834,20 @@ namespace ForTest
                 ToDiscaveryLog("Checked slide");
                 foreach (var a in ToEventArgs(knowSlide.ClickEventArgses))
                 {
-                    CheckPause();
-
-                    mouse.MouseClick(a.MouseButton, a.X, a.Y);
-
-                    if (a.X > 52 && a.X < 914 && a.Y > 81 && a.Y < 247)
+                    if (a.X > 38 && a.X < 922 && a.Y > 46 && a.Y < 618)
                     {
-                        Thread.Sleep(700);
-                    }
-                    else
-                    {
-                        Thread.Sleep(3500);
+                        CheckPause();
+
+                        mouse.MouseClick(a.MouseButton, a.X, a.Y);
+
+                        if (a.X > 52 && a.X < 914 && a.Y > 81 && a.Y < 247)
+                        {
+                            Thread.Sleep(700);
+                        }
+                        else
+                        {
+                            Thread.Sleep(3500);
+                        }
                     }
                 }
 
