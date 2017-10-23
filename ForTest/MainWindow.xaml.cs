@@ -829,15 +829,24 @@ namespace ForTest
                     MainGrid.Background = new SolidColorBrush(Colors.YellowGreen);
                 }));
 
-                Thread.Sleep(3500);
+                Thread.Sleep(500);
 
 
                 ToDiscaveryLog("Checked slide");
                 foreach (var a in ToEventArgs(knowSlide.ClickEventArgses))
                 {
                     CheckPause();
+
                     mouse.MouseClick(a.MouseButton, a.X, a.Y);
-                    Thread.Sleep(3500);
+
+                    if (a.X > 52 && a.X < 914 && a.Y > 81 && a.Y < 247)
+                    {
+                        Thread.Sleep(700);
+                    }
+                    else
+                    {
+                        Thread.Sleep(3500);
+                    }
                 }
 
                 Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
