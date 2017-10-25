@@ -198,6 +198,16 @@ namespace ForTest
             Contrast = true
         };
 
+        private RectPoint PrizePoint4 = new RectPoint()
+        {
+            x1 = 471,
+            y1 = 194,
+            x2 = 473,
+            y2 = 197,
+            Hash = "66C8FC8820A48F52622347D87355CC85",
+            Contrast = true
+        };
+
         private RectPoint AnalizPointPoint = new RectPoint()
         {
             x1 = 801,
@@ -260,11 +270,21 @@ namespace ForTest
 
         private RectPoint ConcensusPoint4 = new RectPoint()
         {
-            x1 = 494,
-            y1 = 92,
+            x1 = 495,
+            y1 = 75,
             x2 = 497,
             y2 = 97,
-            Hash = "15A1323212FDCF181706D853FB8D0714",
+            Hash = "82CE9454EEC439A6320EE3C154F9C4B4",
+            Contrast = false
+        };
+
+        private RectPoint ConcensusPoint5 = new RectPoint()
+        {
+            x1 = 407,
+            y1 = 92,
+            x2 = 410,
+            y2 = 98,
+            Hash = "4BD513E97008950D74E64EE328FC0357",
             Contrast = false
         };
 
@@ -315,14 +335,13 @@ namespace ForTest
 
                 CurrentStage = Stage.BadAnaliz;
             }
-            else if (ConcensusPoint.IsSuccess() || ConcensusPoint2.IsSuccess() || ConcensusPoint3.IsSuccess() || ConcensusPoint4.IsSuccess())
+            else if (ConcensusPoint.IsSuccess() || ConcensusPoint2.IsSuccess() || ConcensusPoint3.IsSuccess() || ConcensusPoint4.IsSuccess() || ConcensusPoint5.IsSuccess())
             {
 
                 CurrentStage = Stage.ConcesusAnaliz;
             }
-            else if (PrizePoint.IsSuccess() || PrizePoint2.IsSuccess() || PrizePoint3.IsSuccess())
+            else if (PrizePoint.IsSuccess() || PrizePoint2.IsSuccess() || PrizePoint3.IsSuccess() || PrizePoint4.IsSuccess())
             {
-
                 CurrentStage = Stage.Prize;
             }
             else if (SuccesAnalizPoint.IsSuccess() || SuccesAnalizPoint2.IsSuccess() || SuccesAnalizPoint3.IsSuccess() || SuccesAnalizPoint4.IsSuccess() || SuccesAnalizPoint5.IsSuccess())
@@ -594,10 +613,9 @@ namespace ForTest
                     break;
 
                 case Stage.Analiz:
-                    Thread.Sleep(1500);
                     string pathOfCurAnalizImage;
 
-                    CurSlideHash = SlideIdenty.ComputeHash(out pathOfCurAnalizImage);
+                    pathOfCurAnalizImage = GetSlideHash();
                     if (CurSlideHash == "2F0584083F44B78ACE619C898F442496")
                     {
                         CurrentStage = Stage.Uncknow;
@@ -682,6 +700,23 @@ namespace ForTest
 
                     break;
             }
+        }
+
+        private string GetSlideHash()
+        {
+            string pathOfCurAnalizImage;
+            CurSlideHash = SlideIdenty.ComputeHash(out pathOfCurAnalizImage);
+
+            for (int i = 0; i < 3; i++)
+            {
+                Thread.Sleep(200);
+                if (GetKnowSlide(CurSlideHash) != null)
+                {
+                    break;
+                }
+            }
+
+            return pathOfCurAnalizImage;
         }
 
         private bool IsBot
@@ -1015,9 +1050,13 @@ namespace ForTest
                     if (CheckPosition())
                     {
                         CheckState();
-                        if (Stage.BadConnection == CurrentStage || CurrentStage != PrevStage || prevIndexWindow != indexOfActiveWindow)
+                        if (!(CurrentStage == PrevStage && PrevStage == Stage.Analiz ))
                         {
                             PlayAction();
+                        }
+
+                        if (CurrentStage != PrevStage)
+                        {
                             timeoutStart = DateTime.UtcNow;
                         }
 
