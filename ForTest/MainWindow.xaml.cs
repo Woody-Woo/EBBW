@@ -962,7 +962,7 @@ namespace ForTest
             using (var db = new LiteDatabase(Path.Combine(_screnShotFolder, DbName)))
             {
                 var knowSlides = db.GetCollection<KnowSlide>("KnowSlide");
-                knowSlides.EnsureIndex(x => x.Hash);
+                //knowSlides.EnsureIndex(x => x.Hash);
                 return knowSlides.FindOne(slide => slide.Hash == hash);
             }
         }
