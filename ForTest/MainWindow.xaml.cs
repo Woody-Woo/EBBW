@@ -208,6 +208,26 @@ namespace ForTest
             Contrast = true
         };
 
+        private RectPoint PrizePoint5 = new RectPoint()
+        {
+            x1 = 544,
+            y1 = 256,
+            x2 = 548,
+            y2 = 260,
+            Hash = "5AA9CAA6160FC8299BE755E720DFB89A",
+            Contrast = true
+        };
+
+        private RectPoint PrizePoint6 = new RectPoint()
+        {
+            x1 = 409,
+            y1 = 112,
+            x2 = 411,
+            y2 = 114,
+            Hash = "A0B7AFEEF8412FCFC9176452102234B5",
+            Contrast = false
+        };
+
         private RectPoint AnalizPointPoint = new RectPoint()
         {
             x1 = 801,
@@ -340,7 +360,7 @@ namespace ForTest
 
                 CurrentStage = Stage.ConcesusAnaliz;
             }
-            else if (PrizePoint.IsSuccess() || PrizePoint2.IsSuccess() || PrizePoint3.IsSuccess() || PrizePoint4.IsSuccess())
+            else if (PrizePoint6.IsSuccess())
             {
                 CurrentStage = Stage.Prize;
             }
@@ -1036,6 +1056,11 @@ namespace ForTest
                 ToLog($"Press key {args.ConsoleKeys}. Key modifer {args.KeyModifer}");
             };
 
+            WhileTrue();
+        }
+
+        private void WhileTrue()
+        {
             Task.Factory.StartNew(() =>
             {
                 while (true)
@@ -1050,7 +1075,7 @@ namespace ForTest
                     if (CheckPosition())
                     {
                         CheckState();
-                        if (!(CurrentStage == PrevStage && PrevStage == Stage.Analiz ))
+                        if (!(CurrentStage == PrevStage && PrevStage == Stage.Analiz))
                         {
                             PlayAction();
                         }
@@ -1062,10 +1087,16 @@ namespace ForTest
 
                         if (IsBot && !IsPlayed && (DateTime.UtcNow - timeoutStart).TotalSeconds > 90)
                         {
+                            mouse.MouseClick(MouseButton.Left, 459,379);
                             ClickNext();
                         }
                     }
-
+                }
+            }).ContinueWith(task =>
+            {
+                if (task.Exception != null)
+                {
+                    WhileTrue();
                 }
             });
         }
@@ -1122,6 +1153,12 @@ namespace ForTest
         private void SynkDbOnClick(object sender, RoutedEventArgs e)
         {
             SynkDb();
+        }
+
+        private void MainWindow_OnDeactivated(object sender, EventArgs e)
+        {
+            //Window window = (Window)sender;
+            //window.Topmost = true;
         }
     }
 }

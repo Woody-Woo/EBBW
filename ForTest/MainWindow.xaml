@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ForTest"
         mc:Ignorable="d" Closed="MainWindow_OnClosed"
-        Title="MainWindow" Height="650" Width="525">
+        Title="MainWindow" Height="650" Width="525" Deactivated="MainWindow_OnDeactivated">
     <Grid  Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
