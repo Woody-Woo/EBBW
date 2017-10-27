@@ -58,6 +58,27 @@ namespace ForTest
             }
         }
 
+        private RectPoint FastAnaliz = new RectPoint()
+        {
+            x1 = 428,
+            y1 = 596,
+            x2 = 440,
+            y2 = 610,
+            Contrast = false,
+            Hash = "971232CFAA594B3EDA24EF905221D375"
+        };
+
+        private RectPoint FastAnaliz2 = new RectPoint()
+        {
+            x1 = 428,
+            y1 = 596,
+            x2 = 440,
+            y2 = 610,
+            Contrast = true,
+            Hash = "3C654AB05B5B9CBF7279E9FEAB01E99D"
+        };
+
+
         private RectPoint BadConnection = new RectPoint()
         {
             x1 = 437,
@@ -345,6 +366,7 @@ namespace ForTest
         private void CheckState()
         {
             PrevStage = CurrentStage;
+
             if (BadConnection.IsSuccess())
             {
                 CurrentStage = Stage.BadConnection;
@@ -566,7 +588,19 @@ namespace ForTest
 
         private void GetHash(object sender, RoutedEventArgs e)
         {
-            Hash.Text = GetHash(int.Parse(X1.Text), int.Parse(Y1.Text), int.Parse(X2.Text), int.Parse(Y2.Text), Contrast.IsChecked != null && Contrast.IsChecked.Value, false);
+            Task.Factory.StartNew(() =>
+            {
+                for (int i = 0; i < 40; i++)
+                {
+                    Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                    {
+                        ToDiscaveryLog(GetHash(int.Parse(X1.Text), int.Parse(Y1.Text), int.Parse(X2.Text),
+                            int.Parse(Y2.Text), Contrast.IsChecked != null && Contrast.IsChecked.Value, false));
+                        Thread.Sleep(100);
+                    }));
+                }
+            });
+            
         }
 
         #endregion
@@ -922,9 +956,6 @@ namespace ForTest
             recMouseClick = new List<MouseClickEventArgs>();
         }
 
-
-
-
         public static int indexOfActiveWindow = 0;
 
         private static Process[] _eveProcess = Process.GetProcessesByName("exefile");
@@ -1120,27 +1151,40 @@ namespace ForTest
                         break;
                     }
 
-                    Thread.Sleep(500);
+                    Thread.Sleep(300);
 
                     if (CheckPosition())
                     {
-                        CheckState();
-                        if (!(CurrentStage == PrevStage && PrevStage == Stage.Analiz))
-                        {
-                            PlayAction();
-                        }
+                        var a = (FastAnaliz.IsSuccess() || FastAnaliz2.IsSuccess() || BadConnection.IsSuccess());
 
-                        if (CurrentStage != PrevStage)
+                        if (!IsBot || !IsFast || a)
                         {
-                            timeoutStart = DateTime.UtcNow;
-                        }
+                            CheckState();
+                            if (!(CurrentStage == PrevStage && PrevStage == Stage.Analiz))
+                            {
+                                PlayAction();
+                            }
 
-                        if (IsBot && !IsPlayed && (DateTime.UtcNow - timeoutStart).TotalSeconds > 90)
+                            if (CurrentStage != PrevStage)
+                            {
+                                timeoutStart = DateTime.UtcNow;
+                            }
+
+                            if (IsBot && !IsPlayed && (DateTime.UtcNow - timeoutStart).TotalSeconds > 90)
+                            {
+                                mouse.MouseClick(MouseButton.Left, 459, 379);
+                                Thread.Sleep(100);
+                                mouse.MouseClick(MouseButton.Left, 644, 467);
+                                ClickNext();
+                            }
+                        }
+                        else
                         {
+                            CurrentStage = Stage.Uncknow;
                             mouse.MouseClick(MouseButton.Left, 459, 379);
-                            Thread.Sleep(100);
+                            
                             mouse.MouseClick(MouseButton.Left, 644, 467);
-                            ClickNext();
+                            ClickNext(true);
                         }
                     }
                 }
