@@ -30,6 +30,7 @@
             <TextBlock Name="StateTextBlock" />
             <CheckBox Content="Speed training" Name="SpeedTraining"></CheckBox>
             <CheckBox Content="Bot" Name="Bot"></CheckBox>
+            <CheckBox Content="Fast" Name="Fast"></CheckBox>
             <TextBlock Text="Stat: succes\failed"/>
             <TextBlock Name="Stat"/>
             <Button Content="SynkDb" Click="SynkDbOnClick"/>

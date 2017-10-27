@@ -617,6 +617,8 @@ namespace ForTest
 
         private void PlayAction()
         {
+            ClearTemp();
+            
             Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
                 Stat.Text = string.Concat(statSuccess, "/", statFail);
@@ -660,7 +662,8 @@ namespace ForTest
 
                         if (speedTraining)
                         {
-                            ClickNext();
+                            CurrentStage = Stage.Uncknow;
+                            ClickNext(IsFast);
                         }
                         //recMouseClick = new List<MouseClickEventArgs>();
                     }
@@ -676,6 +679,12 @@ namespace ForTest
                             {
                                 PlaySlide(knowSlide);
                             }
+
+                            if (IsFast)
+                            {
+                                CurrentStage = Stage.Uncknow;
+                                ClickNext(true);
+                            }
                         }
                         else
                         {
@@ -683,11 +692,19 @@ namespace ForTest
                             if (IsBot)
                             {
                                 ClickNext();
+
+                                if (IsFast)
+                                {
+                                    CurrentStage = Stage.Uncknow;
+                                    ClickNext(true);
+                                }
                             }
                             else
                             {
                                 StopBotAndShowSavedScreen(knowSlide);
                             }
+
+                            
                         }
                     }
 
@@ -695,7 +712,11 @@ namespace ForTest
                     break;
                 case Stage.SuccessAnaliz:
                     statSuccess++;
-                    SaveSlide(CurSlideHash, true);
+
+                    if (!IsFast)
+                    {
+                        SaveSlide(CurSlideHash, true);
+                    }
                     recMouseClick = new List<MouseClickEventArgs>();
                     ClickNext(true);
                     break;
@@ -707,8 +728,11 @@ namespace ForTest
                     break;
                 case Stage.BadAnaliz:
                     statFail++;
-                    SaveBadScreen(CurSlideHash);
-                    SaveSlide(CurSlideHash, false);
+                    if (!IsFast)
+                    {
+                        SaveBadScreen(CurSlideHash);
+                        SaveSlide(CurSlideHash, false);
+                    }
                     recMouseClick = new List<MouseClickEventArgs>();
                     ClickNext(true);
                     break;
@@ -720,6 +744,14 @@ namespace ForTest
 
                     break;
             }
+        }
+
+        private void ClearTemp()
+        {
+            foreach (var x in new DirectoryInfo(ScrrenShotTempFolder).GetFiles())
+            {
+                File.Delete(x.FullName);
+            };
         }
 
         private string GetSlideHash()
@@ -758,6 +790,17 @@ namespace ForTest
                 Dispatcher.Invoke(DispatcherPriority.Background,
                     new Action(() => { speedTraining = SpeedTraining.IsChecked ?? false; }));
                 return speedTraining;
+            }
+        }
+
+        private bool IsFast
+        {
+            get
+            {
+                var x = false;
+                Dispatcher.Invoke(DispatcherPriority.Background,
+                    new Action(() => { x = Fast.IsChecked ?? false; }));
+                return x;
             }
         }
 
@@ -1070,7 +1113,7 @@ namespace ForTest
                         break;
                     }
 
-                    Thread.Sleep(1000);
+                    Thread.Sleep(500);
 
                     if (CheckPosition())
                     {
