@@ -1075,8 +1075,9 @@ namespace ForTest
 
             if (changeWindow)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(50);
                 ChangeEve();
+                Thread.Sleep(200);
             }
 
 
