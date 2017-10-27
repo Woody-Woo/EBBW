@@ -1138,6 +1138,8 @@ namespace ForTest
                         if (IsBot && !IsPlayed && (DateTime.UtcNow - timeoutStart).TotalSeconds > 90)
                         {
                             mouse.MouseClick(MouseButton.Left, 459, 379);
+                            Thread.Sleep(100);
+                            mouse.MouseClick(MouseButton.Left, 644, 467);
                             ClickNext();
                         }
                     }
