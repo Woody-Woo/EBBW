@@ -1075,7 +1075,7 @@ namespace ForTest
 
             if (changeWindow)
             {
-                Thread.Sleep(300);
+                Thread.Sleep(100);
                 ChangeEve();
             }
 
@@ -1151,7 +1151,7 @@ namespace ForTest
                         break;
                     }
 
-                    Thread.Sleep(300);
+                    Thread.Sleep(100);
 
                     if (CheckPosition())
                     {
@@ -1181,9 +1181,9 @@ namespace ForTest
                         else
                         {
                             CurrentStage = Stage.Uncknow;
-                            mouse.MouseClick(MouseButton.Left, 459, 379);
+                            //mouse.MouseClick(MouseButton.Left, 459, 379);
                             
-                            mouse.MouseClick(MouseButton.Left, 644, 467);
+                            //mouse.MouseClick(MouseButton.Left, 644, 467);
                             ClickNext(true);
                         }
                     }
