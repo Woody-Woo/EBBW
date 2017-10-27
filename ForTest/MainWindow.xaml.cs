@@ -618,7 +618,7 @@ namespace ForTest
         private void PlayAction()
         {
             ClearTemp();
-            
+
             Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
                 Stat.Text = string.Concat(statSuccess, "/", statFail);
@@ -704,7 +704,7 @@ namespace ForTest
                                 StopBotAndShowSavedScreen(knowSlide);
                             }
 
-                            
+
                         }
                     }
 
@@ -750,7 +750,14 @@ namespace ForTest
         {
             foreach (var x in new DirectoryInfo(ScrrenShotTempFolder).GetFiles())
             {
-                File.Delete(x.FullName);
+                try
+                {
+                    File.Delete(x.FullName);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             };
         }
 
@@ -1041,7 +1048,7 @@ namespace ForTest
                 ChangeEve();
             }
 
-            
+
         }
 
         public MainWindow()
@@ -1130,7 +1137,7 @@ namespace ForTest
 
                         if (IsBot && !IsPlayed && (DateTime.UtcNow - timeoutStart).TotalSeconds > 90)
                         {
-                            mouse.MouseClick(MouseButton.Left, 459,379);
+                            mouse.MouseClick(MouseButton.Left, 459, 379);
                             ClickNext();
                         }
                     }
