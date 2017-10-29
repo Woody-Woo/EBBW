@@ -249,6 +249,26 @@ namespace ForTest
             Contrast = false
         };
 
+        private RectPoint per990 = new RectPoint()
+        {
+            x1 = 476,
+            y1 = 51,
+            x2 = 503,
+            y2 = 59,
+            Hash = "10EAA2D7757ACF1F9A1B81BD54039E65",
+            Contrast = true
+        };
+
+        private RectPoint per989 = new RectPoint()
+        {
+            x1 = 476,
+            y1 = 51,
+            x2 = 503,
+            y2 = 59,
+            Hash = "3B8C29A0F9C9808E236685F98487AC08",
+            Contrast = true
+        };
+
         private RectPoint AnalizPointPoint = new RectPoint()
         {
             x1 = 801,
@@ -1079,8 +1099,6 @@ namespace ForTest
                 ChangeEve();
                 Thread.Sleep(200);
             }
-
-
         }
 
         public MainWindow()
@@ -1156,9 +1174,9 @@ namespace ForTest
 
                     if (CheckPosition())
                     {
-                        var a = (FastAnaliz.IsSuccess() || FastAnaliz2.IsSuccess() || BadConnection.IsSuccess());
+                        var a = !IsBot || !IsFast || ((!per989.IsSuccess() && !per990.IsSuccess() && (FastAnaliz.IsSuccess() || FastAnaliz2.IsSuccess())) || BadConnection.IsSuccess());
 
-                        if (!IsBot || !IsFast || a)
+                        if ( a)
                         {
                             CheckState();
                             if (!(CurrentStage == PrevStage && PrevStage == Stage.Analiz))
